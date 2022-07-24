@@ -12,8 +12,7 @@ class BaseSingleton(type):
 
 
 class Arena(metaclass=BaseSingleton):
-    STAMINA_PER_ROUND = 3
-    # +3 per round??
+    STAMINA_PER_ROUND = 1
     player = None
     enemy = None
     game_is_running = False
@@ -53,15 +52,15 @@ class Arena(metaclass=BaseSingleton):
         # TODO в этом методе к количеству стамины игрока и врага прибавляется константное значение.
         # TODO главное чтобы оно не привысило максимальные значения (используйте if)
 
-        if self.player.stamina + self.STAMINA_PER_ROUND >= self.player.unit_class.max_stamina:
+        if self.player.stamina + (self.STAMINA_PER_ROUND * self.player.unit_class.stamina_mltplr) >= self.player.unit_class.max_stamina:
             self.player.stamina = self.player.unit_class.max_stamina
         else:
-            self.player.stamina += self.STAMINA_PER_ROUND
+            self.player.stamina += self.STAMINA_PER_ROUND * self.player.unit_class.stamina_mltplr
 
-        if self.enemy.stamina + self.STAMINA_PER_ROUND >= self.enemy.unit_class.max_stamina:
+        if self.enemy.stamina + (self.STAMINA_PER_ROUND * self.enemy.unit_class.stamina_mltplr) >= self.enemy.unit_class.max_stamina:
             self.enemy.stamina = self.enemy.unit_class.max_stamina
         else:
-            self.enemy.stamina += self.STAMINA_PER_ROUND
+            self.enemy.stamina += self.STAMINA_PER_ROUND * self.enemy.unit_class.stamina_mltplr
 
     def next_turn(self):
         # TODO СЛЕДУЮЩИЙ ХОД -> return result | return self.enemy.hit(self.player)
