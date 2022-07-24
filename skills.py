@@ -44,7 +44,7 @@ class Skill(ABC):
         self.target = target
         if self._is_stamina_enough:
             return self.skill_effect()
-        return f"{self.user.name} попытался использовать {self.name} но у него не хватило выносливости."
+        return f"{self.user.name} попытался использовать {self.name} но у него не хватило выносливости"
 
 
 class FuryPunch(Skill):
@@ -61,8 +61,7 @@ class FuryPunch(Skill):
         self.user.stamina -= self.stamina
         self.target.get_damage(self.damage)
 
-        return f"{self.user.name} использует навык {self.name} и наносит {self.damage} урона противнику. " \
-               f"Выносливость {self.user.name} была {self.user.stamina} и снизилась на {self.stamina}."
+        return f"{self.user.name} использует навык {self.name} и наносит {self.damage} урона противнику"
 
 
 class HardShot(Skill):
@@ -74,7 +73,6 @@ class HardShot(Skill):
         self.user.stamina -= self.stamina
         self.target.get_damage(self.damage)
 
-        return f"{self.user.name} использует навык {self.name} и наносит {self.damage} урона противнику. " \
-               f"Выносливость {self.user.name} была {self.user.stamina} и снизилась на {self.stamina}."
+        return f"{self.user.name} использует навык {self.name} и наносит {self.damage} урона противнику"
 
 # skills may be class-specific and would be described case by case

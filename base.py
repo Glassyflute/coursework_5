@@ -38,13 +38,13 @@ class Arena(metaclass=BaseSingleton):
             return None
 
         if self.player.hp <= 0 and self.enemy.hp <= 0:
-            self.battle_result = "Результат игры: ничья."
+            self.battle_result = "Результат игры: ничья"
 
         if self.player.hp <= 0:
-            self.battle_result = "Результат игры: игрок проиграл бой."
+            self.battle_result = "Результат игры: игрок проиграл бой"
 
         if self.enemy.hp <= 0:
-            self.battle_result = "Результат игры: игрок выиграл бой."
+            self.battle_result = "Результат игры: игрок выиграл бой"
 
         return self._end_game()
 
@@ -73,12 +73,26 @@ class Arena(metaclass=BaseSingleton):
         # TODO тогда запускаем процесс регенерации стамины и здоровья для игроков (self._stamina_regeneration)
         # TODO и вызываем функцию self.enemy.hit(self.player) - ответный удар врага
 
-        result = self._check_players_hp()
-        if not result:
-            self._stamina_regeneration()
-            return self.enemy.hit(self.player)
+        # result = self._check_players_hp()
+        # if not result:
+        #     self._stamina_regeneration()
+        #     return self.enemy.hit(self.player)
+        #
+        # return result
 
-        return result
+        # result = self._check_players_hp()
+        # if result is None:
+        #     self._stamina_regeneration()
+        #     return self.enemy.hit(self.player)
+        #
+        # return result
+
+        result = self._check_players_hp()
+        if result:
+            return result
+
+        self._stamina_regeneration()
+        return self.enemy.hit(self.player)
 
         # if result is not None:
         #     return result
@@ -104,7 +118,7 @@ class Arena(metaclass=BaseSingleton):
 
         result_by_player = self.player.hit(self.enemy)
         result_by_enemy = self.next_turn()
-        return f"{result_by_player}.{result_by_enemy}."
+        return f"{result_by_player}{result_by_enemy}"
 
     def player_use_skill(self):
         # TODO КНОПКА ИГРОК ИСПОЛЬЗУЕТ УМЕНИЕ
@@ -114,5 +128,5 @@ class Arena(metaclass=BaseSingleton):
 
         result_by_player = self.player.use_skill(self.enemy)
         result_by_enemy = self.next_turn()
-        return f"{result_by_player}.{result_by_enemy}."
+        return f"{result_by_player}{result_by_enemy}"
 

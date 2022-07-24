@@ -57,7 +57,6 @@ class Equipment:
         # return [armor for armor in self.equipment.armors if armor.name == armor_name]
         # check here
         return None
-# если имеем None, то плохо указано оружие/броня, рестартануть игру и тп
 
     def get_weapons_names(self) -> List[str]:
         # TODO возвращаем список с названиями оружия

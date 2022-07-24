@@ -1,6 +1,4 @@
-from marshmallow_dataclass import dataclass
-# from dataclasses import dataclass
-# SKills TBD , attack_mltplr
+from dataclasses import dataclass
 from skills import Skill, FuryPunch, HardShot
 
 
