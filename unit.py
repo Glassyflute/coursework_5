@@ -132,7 +132,7 @@ class PlayerUnit(BaseUnit):
                    f" и наносит {damage} урона."
 
         if damage == 0:
-            f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} cоперника " \
+            return f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} cоперника " \
             f"его останавливает."
 
         # stamina_to_block_by_armor = target.armor.stamina_per_turn * target.unit_class.stamina_mltplr
@@ -167,4 +167,5 @@ class EnemyUnit(BaseUnit):
                    f" и наносит Вам {damage} урона."
 
         if damage == 0:
-            f"{self.name} используя {self.weapon.name} наносит удар, но Ваш(а) {target.armor.name} его останавливает."
+            return f"{self.name} используя {self.weapon.name} наносит удар, но Ваш(а) " \
+                   f"{target.armor.name} его останавливает."

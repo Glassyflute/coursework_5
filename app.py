@@ -9,7 +9,8 @@ app = Flask(__name__)
 
 heroes = {}
 
-arena = Arena() # TODO инициализируем класс арены
+arena = Arena()
+# TODO инициализируем класс арены
 equipment = Equipment()
 
 @app.route("/")
@@ -32,7 +33,7 @@ def hit():
     # TODO кнопка нанесения удара
     # TODO обновляем экран боя (нанесение удара) (шаблон fight.html)
     # TODO если игра идет - вызываем метод player.hit() экземпляра класса арены
-    ## TODO если игра не идет - пропускаем срабатывание метода (просто рендерим шаблон с текущими данными)
+    # TODO если игра не идет - пропускаем срабатывание метода (просто рендерим шаблон с текущими данными)
 
     if arena.game_is_running:
         result = arena.player_hit()
@@ -99,10 +100,10 @@ def choose_hero():
         player.equip_weapon(equipment.get_weapon(weapon_name))
         player.equip_armor(equipment.get_armor(armor_name))
 
-        if weapon_name not in equipment.get_weapons_names():
-            print("Оружия такого нет.")
-        if armor_name not in equipment.get_armors_names():
-            print("Брони такой нет.")
+        # if weapon_name not in equipment.get_weapons_names():
+        #     print("Оружия такого нет.")
+        # if armor_name not in equipment.get_armors_names():
+        #     print("Брони такой нет.")
 
         heroes["player"] = player
         return redirect(url_for("choose_enemy"))
@@ -137,10 +138,10 @@ def choose_enemy():
         enemy.equip_weapon(equipment.get_weapon(weapon_name))
         enemy.equip_armor(equipment.get_armor(armor_name))
 
-        if weapon_name not in equipment.get_weapons_names():
-            print("Оружия такого нет.")
-        if armor_name not in equipment.get_armors_names():
-            print("Брони такой нет.")
+        # if weapon_name not in equipment.get_weapons_names():
+        #     print("Оружия такого нет.")
+        # if armor_name not in equipment.get_armors_names():
+        #     print("Брони такой нет.")
 
         heroes["enemy"] = enemy
         return redirect(url_for("start_fight"))

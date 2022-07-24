@@ -12,7 +12,7 @@ class BaseSingleton(type):
 
 
 class Arena(metaclass=BaseSingleton):
-    STAMINA_PER_ROUND = 1
+    STAMINA_PER_ROUND = 3
     # +3 per round??
     player = None
     enemy = None
@@ -62,7 +62,6 @@ class Arena(metaclass=BaseSingleton):
             self.enemy.stamina = self.enemy.unit_class.max_stamina
         else:
             self.enemy.stamina += self.STAMINA_PER_ROUND
-
 
     def next_turn(self):
         # TODO СЛЕДУЮЩИЙ ХОД -> return result | return self.enemy.hit(self.player)
@@ -116,7 +115,12 @@ class Arena(metaclass=BaseSingleton):
         # TODO запускаем следующий ход
         # TODO возвращаем результат удара строкой
 
+        result = self._check_players_hp()
+        if result:
+            return result
+
         result_by_player = self.player.hit(self.enemy)
+
         result_by_enemy = self.next_turn()
         return f"{result_by_player}{result_by_enemy}"
 
@@ -126,7 +130,12 @@ class Arena(metaclass=BaseSingleton):
         # TODO включаем следующий ход
         # TODO возвращаем результат удара строкой
 
+        result = self._check_players_hp()
+        if result:
+            return result
+
         result_by_player = self.player.use_skill(self.enemy)
+
         result_by_enemy = self.next_turn()
         return f"{result_by_player}{result_by_enemy}"
 
