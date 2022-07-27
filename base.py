@@ -1,3 +1,5 @@
+from typing import Optional
+
 from unit import BaseUnit
 
 
@@ -12,6 +14,9 @@ class BaseSingleton(type):
 
 
 class Arena(metaclass=BaseSingleton):
+    """
+    Класс описывает взаимодействие между персонажами
+    """
     STAMINA_PER_ROUND = 1
     player = None
     enemy = None
@@ -19,39 +24,38 @@ class Arena(metaclass=BaseSingleton):
     battle_result = None
 
     def start_game(self, player: BaseUnit, enemy: BaseUnit):
-        # TODO НАЧАЛО ИГРЫ -> None
-        # TODO присваиваем экземпляру класса аттрибуты "игрок" и "противник"
-        # TODO а также выставляем True для свойства "началась ли игра"
+        """
+        присваивает экземпляру класса Арена значение свойства Игрок и значение свойства Противник, а также
+        изменяет булево значение класса (флаг game_is_running) на True.
+        """
         self.player = player
         self.enemy = enemy
         self.game_is_running = True
 
-    def _check_players_hp(self):
-        # TODO ПРОВЕРКА ЗДОРОВЬЯ ИГРОКА И ВРАГА
-        # TODO проверка здоровья игрока и врага и возвращение результата строкой:
-        # TODO может быть три результата:
-        # TODO Игрок проиграл битву, Игрок выиграл битву, Ничья и сохраняем его в аттрибуте (self.battle_result)
-        # TODO если Здоровья игроков в порядке то ничего не происходит
-
+    def _check_players_hp(self) -> Optional[str]:
+        """
+        Проверка здоровья игрока и соперника, результат битвы возвращается строкой, когда уровень здоровья
+        персонажа(-ей) перестает измеряться положительным числом.
+        Если уровень здоровья обоих игроков выше нуля, ничего не происходит.
+        """
         if self.player.hp > 0 and self.enemy.hp > 0:
             return None
 
         if self.player.hp <= 0 and self.enemy.hp <= 0:
-            self.battle_result = "Результат игры: ничья"
+            self.battle_result = "Результат игры: Ничья"
 
         if self.player.hp <= 0:
-            self.battle_result = "Результат игры: игрок проиграл бой"
+            self.battle_result = "Результат игры: Игрок проиграл битву"
 
         if self.enemy.hp <= 0:
-            self.battle_result = "Результат игры: игрок выиграл бой"
+            self.battle_result = "Результат игры: Игрок выиграл битву"
 
         return self._end_game()
 
     def _stamina_regeneration(self):
-        # TODO регенерация здоровья и стамины для игрока и врага за ход # здоровья нет в ТЗ
-        # TODO в этом методе к количеству стамины игрока и врага прибавляется константное значение.
-        # TODO главное чтобы оно не привысило максимальные значения (используйте if)
-
+        """
+        регенерация выносливости для игрока и врага за раунд
+        """
         if self.player.stamina + (self.STAMINA_PER_ROUND * self.player.unit_class.stamina_mltplr) >= self.player.unit_class.max_stamina:
             self.player.stamina = self.player.unit_class.max_stamina
         else:
@@ -63,78 +67,55 @@ class Arena(metaclass=BaseSingleton):
             self.enemy.stamina += self.STAMINA_PER_ROUND * self.enemy.unit_class.stamina_mltplr
 
     def next_turn(self):
-        # TODO СЛЕДУЮЩИЙ ХОД -> return result | return self.enemy.hit(self.player)
-        # TODO срабатывает когда игрок пропускает ход или когда игрок наносит удар.
-        # TODO создаем поле result и проверяем что вернется в результате функции self._check_players_hp
-        # TODO если result -> возвращаем его
-        # TODO если же результата пока нет и после завершения хода игра продолжается,
-        # TODO тогда запускаем процесс регенерации стамины и здоровья для игроков (self._stamina_regeneration)
-        # TODO и вызываем функцию self.enemy.hit(self.player) - ответный удар врага
-
-        # result = self._check_players_hp()
-        # if not result:
-        #     self._stamina_regeneration()
-        #     return self.enemy.hit(self.player)
-        #
-        # return result
-
-        # result = self._check_players_hp()
-        # if result is None:
-        #     self._stamina_regeneration()
-        #     return self.enemy.hit(self.player)
-        #
-        # return result
-
+        """
+        Переход к следующему раунду: срабатывает, когда игрок пропускает ход или когда игрок наносит удар.
+        Соперник наносит ответный удар.
+        """
+        # Проверка здоровья игрока и соперника
         result = self._check_players_hp()
+        # если есть результат битвы, возвращается строкой итог битвы и информация о победителе.
         if result:
             return result
 
+        # если бой продолжается, то каждый игрок регенерирует выносливость за раунд
         self._stamina_regeneration()
+        # вызывается функция по ответному удару врага
         return self.enemy.hit(self.player)
 
-        # if result is not None:
-        #     return result
-        #
-        # if self.game_is_running:
-        #     self._stamina_regeneration()
-        #     return self.enemy.hit(self.player)
-
-    def _end_game(self):
-        # TODO КНОПКА ЗАВЕРШЕНИЕ ИГРЫ - > return result: str
-        # TODO очищаем синглтон - self._instances = {}
-        # TODO останавливаем игру (game_is_running)
-        # TODO возвращаем результат
+    def _end_game(self) -> str:
+        """
+        завершение боя, вывод информации по результату боя, очищение информации по текущему бою
+        """
         self._instances = {}
         self.game_is_running = False
         return self.battle_result
 
     def player_hit(self):
-        # TODO КНОПКА УДАР ИГРОКА -> return result: str
-        # TODO получаем результат от функции self.player.hit
-        # TODO запускаем следующий ход
-        # TODO возвращаем результат удара строкой
-
+        """
+        Игрок наносит удар, в ответ получает удар соперника и запускает следующий раунд.
+        Результаты атаки игрока и соперника выводятся строкой
+        """
+        # Проверка здоровья игрока и соперника и наличие итога боя.
         result = self._check_players_hp()
         if result:
             return result
 
+        # если бой не закончен, игрок наносит удар и в ответ получает удар соперника.
         result_by_player = self.player.hit(self.enemy)
-
         result_by_enemy = self.next_turn()
         return f"{result_by_player}{result_by_enemy}"
 
     def player_use_skill(self):
-        # TODO КНОПКА ИГРОК ИСПОЛЬЗУЕТ УМЕНИЕ
-        # TODO получаем результат от функции self.use_skill
-        # TODO включаем следующий ход
-        # TODO возвращаем результат удара строкой
-
+        """
+        Игрок использует умение, соперник выполняет свою атаку, запускается следующий раунд.
+        Результаты атаки игрока и соперника выводятся строкой.
+        """
+        # Проверка здоровья игрока и соперника и наличие итога боя.
         result = self._check_players_hp()
         if result:
             return result
 
+        # если бой не закончен, игрок использует умение, а соперник выполняет свою атаку.
         result_by_player = self.player.use_skill(self.enemy)
-
         result_by_enemy = self.next_turn()
         return f"{result_by_player}{result_by_enemy}"
-

@@ -6,10 +6,10 @@ from random import randint
 from typing import Optional
 
 
-# 32.55
 class BaseUnit(ABC):
     """
-    Базовый класс юнита
+    Базовый класс юнита, характеристики включают имя, класс персонажа, здоровье и выносливость юнита,
+    оружие и броню, флаг _is_skill_used
     """
     def __init__(self, name: str, unit_class: UnitClass):
         """
@@ -25,34 +25,36 @@ class BaseUnit(ABC):
 
     @property
     def health_points(self):
+        """
+        возвращает значение атрибута hp (здоровье)
+        """
         return round(self.hp, 1)
-        # TODO возвращаем аттрибут hp в красивом виде
 
     @property
     def stamina_points(self):
+        """
+        возвращает значение атрибута stamina (выносливость)
+        """
         return round(self.stamina, 1)
-        # TODO возвращаем аттрибут stamina в красивом виде
 
     def equip_weapon(self, weapon: Weapon):
-        # TODO присваиваем нашему герою новое оружие
+        """
+        метод принимает оружие и присваивает это оружие свойству экз-ра класса
+        """
         self.weapon = weapon
         return f"{self.name} экипирован оружием {self.weapon.name}"
 
     def equip_armor(self, armor: Armor):
-        # TODO одеваем новую броню
+        """
+        метод принимает броню и присваивает эту броню свойству экз-ра класса
+        """
         self.armor = armor
         return f"{self.name} экипирован броней {self.armor.name}"
 
     def _count_damage(self, target: BaseUnit) -> float:
-        # TODO Эта функция должна содержать:
-        #  логику расчета урона игрока
-        #  логику расчета брони цели
-        #  здесь же происходит уменьшение выносливости атакующего при ударе
-        #  и уменьшение выносливости защищающегося при использовании брони
-        #  если у защищающегося нехватает выносливости - его броня игнорируется
-        #  после всех расчетов цель получает урон - target.get_damage(damage)
-        #  и возвращаем предполагаемый урон для последующего вывода пользователю в текстовом виде
-
+        """
+        расчет урона, нанесенного игроком
+        """
         # урон игрока рассчитываем по схеме ниже.
         # урон_от_оружия = случайное число в диапазоне (min_damage - max_damage)
         # УРОН_АТАКУЮЩЕГО = урон_от_оружия * модификатор_атаки_класса
@@ -62,12 +64,12 @@ class BaseUnit(ABC):
         self.stamina -= self.weapon.stamina_per_hit
         # восстановление выносливости идет через _stamina_regeneration в файле base.py в каждом раунде
 
-        # проверяем, достаточно ли выносливости у противника
+        # проверяем, достаточно ли выносливости у противника, чтобы снизить урон атакующего
         if target.stamina >= target.armor.stamina_per_turn:
             # БРОНЯ_ЦЕЛИ = надетая_броня * модификатор_брони_класса
             target_armor = target.armor.defence * target.unit_class.armor_mltplr
 
-            # Уменьшается выносливость противника при использовании брони для защиты
+            # Уменьшается выносливость противника (цели) при использовании брони для защиты
             target.stamina -= target.armor.stamina_per_turn
             # восстановление выносливости идет через _stamina_regeneration в файле base.py в каждом раунде
 
@@ -77,31 +79,10 @@ class BaseUnit(ABC):
 
         return target.get_damage(damage)
 
-        # (с учетом класса атакующего игрока и затрат на выносливость при ударе в раунде)
-        # self.stamina -= self.weapon.stamina_per_hit * self.unit_class.stamina_mltplr
-
-        # # проверяем, достаточно ли выносливости у противника, чтобы заблокировать удар броней
-        # # (с учетом класса противника и затрат на выносливость при использовании брони в раунде)
-        # stamina_to_block_by_armor = target.armor.stamina_per_turn * target.unit_class.stamina_mltplr
-        # if target.stamina > stamina_to_block_by_armor:
-        #     # если выносливости хватает, снижаем выносливость противника по результату раунда игры
-        #     # УТОЧНИТЬ если ровненько хватает стамины на блок в раунде????
-        #     target.stamina -= stamina_to_block_by_armor
-        #
-        #     # БРОНЯ_ЦЕЛИ = надетая_броня * модификатор_брони_класса
-        #     target_armor = target.armor.defence * target.unit_class.armor_mltplr
-        #
-        #     # при успешном блокировании броней урон атакующего игрока снижается за счет брони
-        #     # УРОН = УРОН_АТАКУЮЩЕГО - БРОНЯ_ЦЕЛИ
-        #     damage -= target_armor
-
-        # если выносливости у противника недостаточно, чтобы заблокировать удар броней, противник получает
-        # полный урон от атакующего игрока
-
-
     def get_damage(self, damage: float) -> float:
-        # TODO получение урона целью
-        #   присваиваем новое значение для аттрибута self.hp
+        """
+        получение урона целью и снижение уровня здоровья цели
+        """
         damage = round(damage, 1)
         if damage > 0:
             self.hp -= damage
@@ -111,18 +92,16 @@ class BaseUnit(ABC):
     @abstractmethod
     def hit(self, target: BaseUnit) -> str:
         """
-        этот метод будет переопределен ниже
+        метод переопределен ниже
         """
         pass
 
     def use_skill(self, target: BaseUnit) -> str:
         """
-        метод использования умения.
-        если умение уже использовано возвращаем строку
-        Навык использован
-        Если же умение не использовано тогда выполняем функцию
-        self.unit_class.skill.use(user=self, target=target)
-        и уже эта функция вернем нам строку которая характеризует выполнение умения
+        Метод использования умения.
+        Если умение уже использовано, возвращается строка 'Навык использован'.
+        Если умение не было использовано, тогда возвращается строка,
+        которая характеризует выполнение умения, и флаг _is_skill_used меняет значение на True.
         """
         if self._is_skill_used:
             return "Навык использован."
@@ -135,41 +114,35 @@ class PlayerUnit(BaseUnit):
 
     def hit(self, target: BaseUnit) -> str:
         """
-        функция удар игрока:
-        здесь происходит проверка достаточно ли выносливости для нанесения удара.
-        вызывается функция self._count_damage(target)
-        а также возвращается результат в виде строки
+        Функция удар игрока:
+        здесь происходит проверка, достаточно ли выносливости для нанесения удара.
+        Вызывается функция self._count_damage(target), успех атаки отображается строкой.
         """
         # проверяем, достаточно ли выносливости для нанесения удара
-
         if self.stamina < self.weapon.stamina_per_hit:
             return f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
 
-
-        # stamina_to_hit = self.weapon.stamina_per_hit * self.unit_class.stamina_mltplr
-        # if self.stamina < stamina_to_hit:
-        #     return f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
-
+        # показываем результат атаки в части нанесенного игроком урона сопернику
         damage = self._count_damage(target)
         if damage > 0:
             return f"{self.name} используя {self.weapon.name} пробивает {target.armor.name} соперника" \
                    f" и наносит {damage} урона."
 
         if damage == 0:
-            return f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} cоперника " \
-            f"его останавливает."
-
-        # stamina_to_block_by_armor = target.armor.stamina_per_turn * target.unit_class.stamina_mltplr
-        # self.stamina -= self.weapon.stamina_per_hit * self.unit_class.stamina_mltplr
+            return f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} " \
+                   f"cоперника его останавливает."
 
 
 class EnemyUnit(BaseUnit):
 
     def hit(self, target: BaseUnit) -> str:
         """
-        функция удар соперника
-        должна содержать логику применения соперником умения
-        (он должен делать это автоматически и только 1 раз за бой).
+        Функция удар соперника:
+        здесь происходит проверка, применялось ли умение ранее и дается шанс применить умение.
+        Происходит проверка, достаточно ли выносливости для нанесения удара.
+        Вызывается функция self._count_damage(target), успех атаки отображается строкой.
+
+
         Например, для этих целей можно использовать функцию randint из библиотеки random.
         Если умение не применено, противник наносит простой удар, где также используется
         функция _count_damage(target)
@@ -181,10 +154,12 @@ class EnemyUnit(BaseUnit):
             self.use_skill(target)
 
         # если умение не было применено, то противник наносит простой удар
+        # проверка, достаточно ли выносливости для нанесения удара
         stamina_to_hit = self.weapon.stamina_per_hit * self.unit_class.stamina_mltplr
         if self.stamina < stamina_to_hit:
             return f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
 
+        # показывается результат атаки в части нанесенного урона игроку
         damage = self._count_damage(target)
         if damage > 0:
             return f"{self.name} используя {self.weapon.name} пробивает {target.armor.name}" \

@@ -4,6 +4,10 @@ from skills import Skill, FuryPunch, HardShot
 
 @dataclass
 class UnitClass:
+    """
+    Класс юнита, с характеристиками макс.здоровья, макс.выносливости, навыком и multipliers
+    на атаку, выносливость и броню класса
+    """
     name: str
     max_health: float
     max_stamina: float
@@ -13,7 +17,7 @@ class UnitClass:
     skill: Skill
 
 
-# TODO Инициализируем экземпляры класса UnitClass и присваиваем им необходимые значения аттрибутов
+# Инициализируем экземпляры класса UnitClass и присваиваем им значения аттрибутов
 WarriorClass = UnitClass(
     name="Воин",
     max_health=20.0,

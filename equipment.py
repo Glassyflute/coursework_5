@@ -8,6 +8,10 @@ import json
 
 @dataclass
 class Armor:
+    """
+    Класс брони, с характеристиками название, значение защиты (defence),
+    затрачиваемое значение выносливости за раунд боя (stamina_per_turn)
+    """
     id: int
     name: str
     defence: float
@@ -16,6 +20,10 @@ class Armor:
 
 @dataclass
 class Weapon:
+    """
+    Класс оружия, с характеристиками название, минимальный и максимальный урон оружия,
+    затрачиваемое значение выносливости за раунд боя (stamina_per_hit)
+    """
     id: int
     name: str
     min_damage: float
@@ -24,46 +32,58 @@ class Weapon:
 
     @property
     def damage(self):
+        """
+        генерация рандомного числа между минимальным и максимальным значениями
+        """
         return round(uniform(self.min_damage, self.max_damage), 1)
 
 
 @dataclass
 class EquipmentData:
-    # TODO содержит 2 списка - с оружием и с броней
+    """
+    Класс содержит список с оружием и список с броней
+    """
     weapons: List[Weapon]
     armors: List[Armor]
-# Для реализации данной логики вспомните уроки про библиотеку marshallow и marshmallow_classes,
-# а также задачи тренажера про друзей из ВКонтакте
 
 
 class Equipment:
-    # Класс представляет собой интерфейс для взаимодействия с классом BaseUnit
+    """
+    Класс представляет собой интерфейс для взаимодействия с классом BaseUnit
+    """
     def __init__(self):
         self.equipment = self._get_equipment_data()
 
     def get_weapon(self, weapon_name: str) -> Optional[Weapon]:
-        # TODO возвращает объект оружия по имени
-        # Метод get_weapon, который принимает имя_оружия и возвращает класс Weapon.
+        """
+        принимает имя_оружия и возвращает класс Weapon
+        """
         for weapon in self.equipment.weapons:
             if weapon.name == weapon_name:
                 return weapon
+        # return [weapon for weapon in self.equipment.weapons if weapon.name == weapon_name]
         return None
 
     def get_armor(self, armor_name: str) -> Optional[Armor]:
-        # TODO возвращает объект брони по имени
+        """
+        принимает имя_брони и возвращает класс Armor
+        """
         for armor in self.equipment.armors:
             if armor.name == armor_name:
                 return armor
         # return [armor for armor in self.equipment.armors if armor.name == armor_name]
-        # check here
         return None
 
     def get_weapons_names(self) -> List[str]:
-        # TODO возвращаем список с названиями оружия
+        """
+        возвращает список с названиями оружия
+        """
         return [weapon.name for weapon in self.equipment.weapons]
 
     def get_armors_names(self) -> List[str]:
-        # TODO возвращаем список с названиями брони
+        """
+        возвращает список с названиями брони
+        """
         return [armor.name for armor in self.equipment.armors]
 
     @staticmethod
@@ -76,12 +96,4 @@ class Equipment:
             equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
 
             return equipment_schema().load(data)
-
-        # equipment_file = open("./data/equipment.json")
-        # data = json.load( ... )
-        # equipment_schema = marshmallow_dataclass.class_schema( ... )
-        # try:
-        #     return equipment_schema().load(data)
-        # except marshmallow.exceptions.ValidationError:
-        #     raise ValueError
 
