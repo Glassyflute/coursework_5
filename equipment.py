@@ -61,7 +61,6 @@ class Equipment:
         for weapon in self.equipment.weapons:
             if weapon.name == weapon_name:
                 return weapon
-        # return [weapon for weapon in self.equipment.weapons if weapon.name == weapon_name]
         return None
 
     def get_armor(self, armor_name: str) -> Optional[Armor]:
@@ -71,7 +70,6 @@ class Equipment:
         for armor in self.equipment.armors:
             if armor.name == armor_name:
                 return armor
-        # return [armor for armor in self.equipment.armors if armor.name == armor_name]
         return None
 
     def get_weapons_names(self) -> List[str]:
@@ -96,4 +94,3 @@ class Equipment:
             equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
 
             return equipment_schema().load(data)
-
