@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, jsonify
 
 from base import Arena
 from classes import unit_classes
 from equipment import Equipment
-from unit import BaseUnit, PlayerUnit, EnemyUnit
+from unit import PlayerUnit, EnemyUnit
 
 app = Flask(__name__)
 
@@ -63,7 +63,7 @@ def end_fight():
     return render_template("index.html", heroes=heroes)
 
 
-@app.route("/choose-hero/", methods=['post', 'get'])
+@app.route("/choose-hero/", methods=['POST', 'GET'])
 def choose_hero():
     # кнопка выбор героя, далее редирект на эндпоинт choose enemy
     if request.method == "GET":
@@ -76,27 +76,24 @@ def choose_hero():
         return render_template("hero_choosing.html", result=result)
 
     elif request.method == "POST":
-        name = request.form["name"]
-        weapon_name = request.form["weapon"]
-        armor_name = request.form["armor"]
-        unit_class = request.form["unit_class"]
+        name = request.form.get("name")
+        unit_class = request.form.get("unit_class")
+        weapon_name = request.form.get("weapon")
+        armor_name = request.form.get("armor")
 
         player = PlayerUnit(name=name, unit_class=unit_classes.get(unit_class))
 
-        # здесь можно проверить, есть ли название оружия или брони среди доступных из выбора
+        if weapon_name not in equipment.get_weapons_names() or armor_name not in equipment.get_armors_names():
+            return jsonify(error="Не хватает данных для начала игры. "), 400
+
         player.equip_weapon(equipment.get_weapon(weapon_name))
         player.equip_armor(equipment.get_armor(armor_name))
-
-        # if weapon_name not in equipment.get_weapons_names():
-        #     print("Оружия такого нет.")
-        # if armor_name not in equipment.get_armors_names():
-        #     print("Брони такой нет.")
 
         heroes["player"] = player
         return redirect(url_for("choose_enemy"))
 
 
-@app.route("/choose-enemy/", methods=['post', 'get'])
+@app.route("/choose-enemy/", methods=['POST', 'GET'])
 def choose_enemy():
     # кнопка выбор противника, далее редирект на начало битвы
     if request.method == "GET":
@@ -109,21 +106,18 @@ def choose_enemy():
         return render_template("hero_choosing.html", result=result)
 
     elif request.method == "POST":
-        name = request.form["name"]
-        weapon_name = request.form["weapon"]
-        armor_name = request.form["armor"]
-        unit_class = request.form["unit_class"]
+        name = request.form.get("name")
+        unit_class = request.form.get("unit_class")
+        weapon_name = request.form.get("weapon")
+        armor_name = request.form.get("armor")
 
         enemy = EnemyUnit(name=name, unit_class=unit_classes.get(unit_class))
 
-        # здесь можно проверить, есть ли название оружия или брони среди доступных из выбора
+        if weapon_name not in equipment.get_weapons_names() or armor_name not in equipment.get_armors_names():
+            return jsonify(error="Не хватает данных для начала игры. "), 400
+
         enemy.equip_weapon(equipment.get_weapon(weapon_name))
         enemy.equip_armor(equipment.get_armor(armor_name))
-
-        # if weapon_name not in equipment.get_weapons_names():
-        #     print("Оружия такого нет.")
-        # if armor_name not in equipment.get_armors_names():
-        #     print("Брони такой нет.")
 
         heroes["enemy"] = enemy
         return redirect(url_for("start_fight"))

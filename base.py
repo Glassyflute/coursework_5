@@ -103,7 +103,7 @@ class Arena(metaclass=BaseSingleton):
         # если бой не закончен, игрок наносит удар и в ответ получает удар соперника.
         result_by_player = self.player.hit(self.enemy)
         result_by_enemy = self.next_turn()
-        return f"{result_by_player}{result_by_enemy}"
+        return f"{result_by_player} {result_by_enemy} "
 
     def player_use_skill(self):
         """
@@ -118,4 +118,4 @@ class Arena(metaclass=BaseSingleton):
         # если бой не закончен, игрок использует умение, а соперник выполняет свою атаку.
         result_by_player = self.player.use_skill(self.enemy)
         result_by_enemy = self.next_turn()
-        return f"{result_by_player}{result_by_enemy}"
+        return f"{result_by_player} {result_by_enemy} "

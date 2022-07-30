@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import List, Optional
 from random import uniform
 import marshmallow_dataclass
-import marshmallow
 import json
 
 

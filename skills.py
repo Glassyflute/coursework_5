@@ -59,7 +59,7 @@ class FuryPunch(Skill):
         self.user.stamina -= self.stamina
         self.target.get_damage(self.damage)
 
-        return f"{self.user.name} использует навык {self.name} и наносит {self.damage} урона противнику."
+        return f"{self.user.name} использует навык {self.name} и наносит {self.damage} урона противнику. "
 
 
 class HardShot(Skill):
@@ -71,5 +71,4 @@ class HardShot(Skill):
         self.user.stamina -= self.stamina
         self.target.get_damage(self.damage)
 
-        return f"{self.user.name} использует навык {self.name} и наносит {self.damage} урона противнику."
-
+        return f"{self.user.name} использует навык {self.name} и наносит {self.damage} урона противнику. "

@@ -79,7 +79,7 @@ class BaseUnit(ABC):
 
         return target.get_damage(damage)
 
-    def get_damage(self, damage: float) -> float:
+    def get_damage(self, damage: float) -> Optional[float]:
         """
         получение урона целью и снижение уровня здоровья цели
         """
@@ -120,17 +120,17 @@ class PlayerUnit(BaseUnit):
         """
         # проверяем, достаточно ли выносливости для нанесения удара
         if self.stamina < self.weapon.stamina_per_hit:
-            return f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
+            return f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости. "
 
         # показываем результат атаки в части нанесенного игроком урона сопернику
         damage = self._count_damage(target)
         if damage > 0:
             return f"{self.name} используя {self.weapon.name} пробивает {target.armor.name} соперника" \
-                   f" и наносит {damage} урона."
+                   f" и наносит {damage} урона. "
 
         if damage == 0:
             return f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} " \
-                   f"cоперника его останавливает."
+                   f"cоперника его останавливает. "
 
 
 class EnemyUnit(BaseUnit):
@@ -157,14 +157,14 @@ class EnemyUnit(BaseUnit):
         # проверка, достаточно ли выносливости для нанесения удара
         stamina_to_hit = self.weapon.stamina_per_hit * self.unit_class.stamina_mltplr
         if self.stamina < stamina_to_hit:
-            return f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
+            return f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости. "
 
         # показывается результат атаки в части нанесенного урона игроку
         damage = self._count_damage(target)
         if damage > 0:
             return f"{self.name} используя {self.weapon.name} пробивает {target.armor.name}" \
-                   f" и наносит Вам {damage} урона."
+                   f" и наносит Вам {damage} урона. "
 
         if damage == 0:
             return f"{self.name} используя {self.weapon.name} наносит удар, но Ваш(а) " \
-                   f"{target.armor.name} его останавливает."
+                   f"{target.armor.name} его останавливает. "
